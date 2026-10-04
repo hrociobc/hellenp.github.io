@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hellen Pinel — Desarrolladora Web Frontend</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg-deep:    #0B0F1A;
+    --bg-card:    #131929;
+    --bg-subtle:  #1A2236;
+    --violet:     #7C3AED;
+    --violet-glow:#9D5CF5;
+    --cyan:       #22D3EE;
+    --white:      #F0F4FF;
+    --muted:      #8A99B8;
+    --border:     rgba(124,58,237,0.18);
+    --ff-display: 'Space Grotesk', sans-serif;
+    --ff-body:    'Inter', sans-serif;
+    --ff-mono:    'JetBrains Mono', monospace;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg-deep);
+    color: var(--white);
+    font-family: var(--ff-body);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE TEXTURE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 0; opacity: 0.35;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.1rem 6%;
+    background: rgba(11,15,26,0.85);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border);
+    z-index: 100;
+  }
+  .nav-logo {
+    font-family: var(--ff-display);
+    font-weight: 700; font-size: 1.1rem;
+    color: var(--white);
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--violet-glow); }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a {
+    color: var(--muted); text-decoration: none;
+    font-size: 0.875rem; font-family: var(--ff-display); font-weight: 500;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--cyan); }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 8rem 6% 5rem;
+    position: relative;
+  }
+  .hero-glow {
+    position: absolute; top: 10%; left: -10%;
+    width: 55vw; height: 55vw; max-width: 700px;
+    background: radial-gradient(ellipse, rgba(124,58,237,0.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-eyebrow {
+    font-family: var(--ff-mono);
+    font-size: 0.8rem; color: var(--cyan);
+    letter-spacing: 0.15em; text-transform: uppercase;
+    margin-bottom: 1.2rem;
+  }
+  .hero-name {
+    font-family: var(--ff-display);
+    font-size: clamp(2.8rem, 7vw, 5.5rem);
+    font-weight: 700; line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--white);
+    margin-bottom: 0.4rem;
+  }
+  .hero-name .accent { color: var(--violet-glow); }
+  .hero-role {
+    font-family: var(--ff-display);
+    font-size: clamp(1rem, 2.5vw, 1.4rem);
+    font-weight: 400; color: var(--muted);
+    margin-bottom: 2.5rem;
+  }
+
+  /* Terminal animado */
+  .terminal {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.2rem 1.5rem;
+    max-width: 520px;
+    margin-bottom: 3rem;
+    font-family: var(--ff-mono);
+    font-size: 0.82rem;
+    line-height: 1.8;
+    position: relative;
+  }
+  .terminal-bar {
+    display: flex; gap: 6px; margin-bottom: 0.9rem;
+  }
+  .dot { width: 11px; height: 11px; border-radius: 50%; }
+  .dot-r { background: #FF5F57; }
+  .dot-y { background: #FFBD2E; }
+  .dot-g { background: #28CA42; }
+  .terminal-line { color: var(--muted); }
+  .terminal-line .prompt { color: var(--violet-glow); }
+  .terminal-line .cmd { color: var(--white); }
+  .terminal-line .val { color: var(--cyan); }
+  .cursor {
+    display: inline-block; width: 8px; height: 1.1em;
+    background: var(--cyan); vertical-align: middle;
+    animation: blink 1.1s step-end infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  .hero-cta { display: flex; gap: 1rem; flex-wrap: wrap; }
+  .btn-primary {
+    background: var(--violet);
+    color: var(--white);
+    padding: 0.75rem 1.8rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-family: var(--ff-display); font-weight: 600; font-size: 0.9rem;
+    transition: background 0.2s, transform 0.15s;
+    border: none; cursor: pointer;
+  }
+  .btn-primary:hover { background: var(--violet-glow); transform: translateY(-2px); }
+  .btn-outline {
+    background: transparent;
+    color: var(--white);
+    padding: 0.75rem 1.8rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-family: var(--ff-display); font-weight: 600; font-size: 0.9rem;
+    border: 1px solid var(--border);
+    transition: border-color 0.2s, color 0.2s, transform 0.15s;
+  }
+  .btn-outline:hover { border-color: var(--violet-glow); color: var(--violet-glow); transform: translateY(-2px); }
+
+  /* ── SECTIONS ── */
+  section { padding: 6rem 6%; position: relative; }
+  .section-tag {
+    font-family: var(--ff-mono); font-size: 0.75rem;
+    color: var(--violet-glow); letter-spacing: 0.12em;
+    text-transform: uppercase; margin-bottom: 0.6rem;
+  }
+  .section-title {
+    font-family: var(--ff-display);
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    font-weight: 700; line-height: 1.1;
+    margin-bottom: 1rem;
+  }
+  .section-divider {
+    width: 48px; height: 3px;
+    background: linear-gradient(90deg, var(--violet), var(--cyan));
+    border-radius: 2px; margin-bottom: 3rem;
+  }
+
+  /* ── SOBRE MÍ ── */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem; align-items: start;
+  }
+  .about-text p {
+    color: var(--muted); font-size: 1rem;
+    margin-bottom: 1.2rem; line-height: 1.75;
+  }
+  .about-text p strong { color: var(--white); font-weight: 500; }
+  .about-stats {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+  .stat-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.5rem 1.2rem;
+    text-align: center;
+    transition: border-color 0.2s;
+  }
+  .stat-card:hover { border-color: var(--violet); }
+  .stat-num {
+    font-family: var(--ff-display); font-size: 2rem;
+    font-weight: 700; color: var(--violet-glow);
+    display: block; margin-bottom: 0.3rem;
+  }
+  .stat-label { font-size: 0.78rem; color: var(--muted); line-height: 1.3; }
+
+  /* ── STACK ── */
+  #stack { background: var(--bg-subtle); }
+  .stack-groups {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1.5rem;
+  }
+  .stack-group h4 {
+    font-family: var(--ff-mono); font-size: 0.72rem;
+    color: var(--cyan); letter-spacing: 0.1em;
+    text-transform: uppercase; margin-bottom: 0.9rem;
+  }
+  .tag-list { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .tag {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--white); font-size: 0.8rem;
+    padding: 0.3rem 0.75rem; border-radius: 4px;
+    font-family: var(--ff-display); font-weight: 500;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .tag:hover { border-color: var(--violet); color: var(--violet-glow); }
+
+  /* ── EXPERIENCIA ── */
+  .timeline { position: relative; padding-left: 2rem; }
+  .timeline::before {
+    content: '';
+    position: absolute; left: 0; top: 8px; bottom: 0;
+    width: 2px;
+    background: linear-gradient(180deg, var(--violet), transparent);
+  }
+  .timeline-item { position: relative; margin-bottom: 3.5rem; }
+  .timeline-dot {
+    position: absolute; left: -2.45rem; top: 6px;
+    width: 14px; height: 14px; border-radius: 50%;
+    background: var(--violet); border: 2px solid var(--bg-deep);
+    box-shadow: 0 0 0 3px rgba(124,58,237,0.25);
+  }
+  .timeline-meta {
+    display: flex; flex-wrap: wrap; gap: 0.5rem;
+    align-items: center; margin-bottom: 0.5rem;
+  }
+  .timeline-role {
+    font-family: var(--ff-display); font-weight: 600;
+    font-size: 1.1rem; color: var(--white);
+  }
+  .timeline-badge {
+    background: rgba(124,58,237,0.15);
+    color: var(--violet-glow); font-size: 0.72rem;
+    padding: 0.2rem 0.6rem; border-radius: 4px;
+    font-family: var(--ff-mono);
+  }
+  .timeline-company { color: var(--muted); font-size: 0.88rem; margin-bottom: 0.9rem; }
+  .timeline-bullets { list-style: none; }
+  .timeline-bullets li {
+    color: var(--muted); font-size: 0.92rem;
+    padding: 0.35rem 0 0.35rem 1.2rem;
+    position: relative; line-height: 1.55;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .timeline-bullets li:last-child { border-bottom: none; }
+  .timeline-bullets li::before {
+    content: '▸';
+    position: absolute; left: 0;
+    color: var(--cyan); font-size: 0.75rem;
+  }
+
+  /* ── PROYECTOS ── */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+  .project-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .project-card:hover { transform: translateY(-4px); border-color: var(--violet); }
+  .project-icon {
+    width: 44px; height: 44px; border-radius: 8px;
+    background: rgba(124,58,237,0.12);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 1.2rem; font-size: 1.3rem;
+  }
+  .project-title {
+    font-family: var(--ff-display); font-weight: 600;
+    font-size: 1.05rem; margin-bottom: 0.4rem;
+  }
+  .project-sub { color: var(--muted); font-size: 0.82rem; margin-bottom: 1rem; }
+  .project-desc { color: var(--muted); font-size: 0.88rem; line-height: 1.6; margin-bottom: 1.2rem; }
+  .project-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .project-tag {
+    font-size: 0.72rem; padding: 0.2rem 0.55rem;
+    border-radius: 3px;
+    font-family: var(--ff-mono);
+  }
+  .tag-angular { background: rgba(221,0,49,0.12); color: #F56565; }
+  .tag-laravel { background: rgba(255,80,50,0.12); color: #FC8181; }
+  .tag-mysql   { background: rgba(34,211,238,0.10); color: var(--cyan); }
+  .tag-ts      { background: rgba(49,120,198,0.15); color: #90CDF4; }
+  .tag-php     { background: rgba(97,78,206,0.15); color: #B794F4; }
+
+  /* ── FORMACIÓN ── */
+  #formacion { background: var(--bg-subtle); }
+  .edu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.2rem; }
+  .edu-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px; padding: 1.5rem 1.8rem;
+    transition: border-color 0.2s;
+  }
+  .edu-card:hover { border-color: var(--violet); }
+  .edu-year {
+    font-family: var(--ff-mono); font-size: 0.72rem;
+    color: var(--cyan); margin-bottom: 0.4rem;
+  }
+  .edu-degree {
+    font-family: var(--ff-display); font-weight: 600;
+    font-size: 0.95rem; margin-bottom: 0.3rem;
+  }
+  .edu-inst { color: var(--muted); font-size: 0.82rem; }
+
+  /* ── CERTIFICACIONES ── */
+  .certs-list { display: flex; flex-direction: column; gap: 0.8rem; }
+  .cert-item {
+    display: flex; align-items: center; gap: 1rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px; padding: 1rem 1.3rem;
+    transition: border-color 0.2s;
+  }
+  .cert-item:hover { border-color: var(--violet); }
+  .cert-icon { color: var(--violet-glow); font-size: 1.1rem; flex-shrink: 0; }
+  .cert-name { font-size: 0.9rem; font-weight: 500; }
+  .cert-issuer { color: var(--muted); font-size: 0.78rem; }
+
+  /* ── CONTACTO ── */
+  #contacto { text-align: center; }
+  .contact-desc {
+    color: var(--muted); font-size: 1rem;
+    max-width: 480px; margin: 0 auto 2.5rem;
+  }
+  .contact-links {
+    display: flex; justify-content: center; gap: 1.2rem; flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+  }
+  .contact-link {
+    display: flex; align-items: center; gap: 0.5rem;
+    color: var(--muted); text-decoration: none;
+    font-size: 0.88rem; font-family: var(--ff-display);
+    padding: 0.6rem 1.2rem;
+    border: 1px solid var(--border); border-radius: 6px;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .contact-link:hover { color: var(--cyan); border-color: var(--cyan); }
+  .contact-email {
+    font-family: var(--ff-mono); font-size: 1rem;
+    color: var(--violet-glow);
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 1.5rem 6%;
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 0.5rem;
+  }
+  footer p { color: var(--muted); font-size: 0.78rem; }
+  footer span { color: var(--violet-glow); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    nav { padding: 1rem 5%; }
+    .nav-links { gap: 1.2rem; }
+    .hero { padding: 7rem 5% 4rem; }
+    .about-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+    section { padding: 4.5rem 5%; }
+    .contact-links { gap: 0.8rem; }
+  }
+  @media (max-width: 480px) {
+    .nav-links { display: none; }
+    .hero-name { font-size: 2.4rem; }
+    .terminal { font-size: 0.75rem; }
+    footer { flex-direction: column; text-align: center; }
+  }
+
+  /* ── SCROLL ANIMATIONS ── */
+  .fade-in {
+    opacity: 0; transform: translateY(24px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .fade-in.visible { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#inicio" class="nav-logo">Hellen<span>.</span></a>
+  <ul class="nav-links">
+    <li><a href="#sobre">Sobre mí</a></li>
+    <li><a href="#stack">Stack</a></li>
+    <li><a href="#experiencia">Experiencia</a></li>
+    <li><a href="#proyectos">Proyectos</a></li>
+    <li><a href="#contacto">Contacto</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="inicio">
+  <div class="hero-glow"></div>
+  <p class="hero-eyebrow">// Tegucigalpa, Honduras</p>
+  <h1 class="hero-name">Hellen<br>Rocío <span class="accent">Pinel Baca</span></h1>
+  <p class="hero-role">Licenciada en Informática Administrativa · Desarrolladora Web Frontend</p>
+
+  <div class="terminal">
+    <div class="terminal-bar">
+      <div class="dot dot-r"></div>
+      <div class="dot dot-y"></div>
+      <div class="dot dot-g"></div>
+    </div>
+    <div class="terminal-line"><span class="prompt">$ </span><span class="cmd">whoami</span></div>
+    <div class="terminal-line"><span class="val">hellen_pinel</span> <span style="color:var(--muted)">· Frontend Developer</span></div>
+    <div class="terminal-line" style="margin-top:0.4rem"><span class="prompt">$ </span><span class="cmd">skills --list</span></div>
+    <div class="terminal-line"><span class="val">Angular</span> · <span class="val">TypeScript</span> · <span class="val">Laravel</span> · <span class="val">MySQL</span></div>
+    <div class="terminal-line" style="margin-top:0.4rem"><span class="prompt">$ </span><span class="cmd">status</span></div>
+    <div class="terminal-line"><span style="color:#28CA42">✔</span> Disponible para oportunidades <span class="cursor"></span></div>
+  </div>
+
+  <div class="hero-cta">
+    <a href="#proyectos" class="btn-primary">Ver proyectos</a>
+    <a href="#contacto" class="btn-outline">Contactar</a>
+  </div>
+</section>
+
+<!-- SOBRE MÍ -->
+<section id="sobre">
+  <div class="fade-in">
+    <p class="section-tag">// 01 · sobre mí</p>
+    <h2 class="section-title">Quién soy</h2>
+    <div class="section-divider"></div>
+  </div>
+  <div class="about-grid fade-in">
+    <div class="about-text">
+      <p>Soy <strong>Licenciada en Informática Administrativa</strong> por la UNAH, con especialización práctica en desarrollo de aplicaciones web con <strong>Angular y Laravel</strong>.</p>
+      <p>Durante mi práctica profesional participé en el desarrollo de módulos para sistemas web institucionales reales, fortaleciendo competencias en arquitectura de componentes, consumo de APIs REST, diseño responsivo y gestión de bases de datos.</p>
+      <p>Me caracterizo por ser organizada, orientada a resultados y con capacidad de aprendizaje continuo. Disfruto resolver problemas complejos con soluciones tecnológicas limpias y mantenibles, y busco contribuir a equipos que valoren la calidad del código y la mejora continua.</p>
+    </div>
+    <div class="about-stats">
+      <div class="stat-card">
+        <span class="stat-num">4+</span>
+        <span class="stat-label">Tecnologías en stack principal</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-num">2</span>
+        <span class="stat-label">Proyectos significativos desarrollados</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-num">4</span>
+        <span class="stat-label">Certificaciones técnicas</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-num">2026</span>
+        <span class="stat-label">Graduada UNAH · Licenciatura</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STACK -->
+<section id="stack">
+  <div class="fade-in">
+    <p class="section-tag">// 02 · tecnologías</p>
+    <h2 class="section-title">Stack técnico</h2>
+    <div class="section-divider"></div>
+  </div>
+  <div class="stack-groups fade-in">
+    <div class="stack-group">
+      <h4>Frontend</h4>
+      <div class="tag-list">
+        <span class="tag">Angular</span>
+        <span class="tag">TypeScript</span>
+        <span class="tag">HTML5</span>
+        <span class="tag">CSS3</span>
+        <span class="tag">Angular Material</span>
+        <span class="tag">Bootstrap</span>
+      </div>
+    </div>
+    <div class="stack-group">
+      <h4>Backend</h4>
+      <div class="tag-list">
+        <span class="tag">Laravel</span>
+        <span class="tag">PHP</span>
+        <span class="tag">Node.js</span>
+        <span class="tag">APIs REST</span>
+      </div>
+    </div>
+    <div class="stack-group">
+      <h4>Bases de datos</h4>
+      <div class="tag-list">
+        <span class="tag">MySQL</span>
+        <span class="tag">SQL</span>
+        <span class="tag">Modelado de datos</span>
+      </div>
+    </div>
+    <div class="stack-group">
+      <h4>Herramientas</h4>
+      <div class="tag-list">
+        <span class="tag">Git</span>
+        <span class="tag">GitHub</span>
+        <span class="tag">Postman</span>
+        <span class="tag">VS Code</span>
+      </div>
+    </div>
+    <div class="stack-group">
+      <h4>Prácticas</h4>
+      <div class="tag-list">
+        <span class="tag">Arquitectura MVC</span>
+        <span class="tag">Responsive Design</span>
+        <span class="tag">Control de roles</span>
+        <span class="tag">Inyección de dependencias</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCIA -->
+<section id="experiencia">
+  <div class="fade-in">
+    <p class="section-tag">// 03 · experiencia</p>
+    <h2 class="section-title">Trayectoria profesional</h2>
+    <div class="section-divider"></div>
+  </div>
+  <div class="timeline fade-in">
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-meta">
+        <span class="timeline-role">Desarrolladora Frontend</span>
+        <span class="timeline-badge">Práctica Profesional</span>
+      </div>
+      <p class="timeline-company">Tegucigalpa, Honduras · 2025–2026</p>
+      <ul class="timeline-bullets">
+        <li>Desarrollé módulos para un sistema web institucional utilizando <strong>Angular</strong> y arquitectura basada en componentes reutilizables.</li>
+        <li>Implementé navegación entre vistas con <strong>Angular Router</strong> y control de acceso basado en roles.</li>
+        <li>Consumí APIs REST con <strong>HttpClient</strong> para gestión y visualización de datos en tiempo real.</li>
+        <li>Construí formularios reactivos con validaciones dinámicas para optimizar la captura de datos.</li>
+        <li>Diseñé interfaces responsivas con <strong>Angular Material</strong>, mejorando la experiencia de usuario.</li>
+        <li>Implementé servicios e inyección de dependencias para centralizar la lógica de negocio.</li>
+        <li>Participé en pruebas funcionales, corrección de errores y mejoras continuas de la aplicación.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- PROYECTOS -->
+<section id="proyectos" style="background:var(--bg-subtle)">
+  <div class="fade-in">
+    <p class="section-tag">// 04 · proyectos</p>
+    <h2 class="section-title">Trabajo destacado</h2>
+    <div class="section-divider"></div>
+  </div>
+  <div class="projects-grid fade-in">
+    <div class="project-card">
+      <div class="project-icon">🏗️</div>
+      <h3 class="project-title">Sistema Web Institucional</h3>
+      <p class="project-sub">Práctica Profesional · 2025–2026</p>
+      <p class="project-desc">Desarrollo de módulos funcionales para un sistema web real con autenticación, control de roles y navegación dinámica. Arquitectura basada en componentes con consumo de APIs REST y formularios reactivos.</p>
+      <div class="project-tags">
+        <span class="project-tag tag-angular">Angular</span>
+        <span class="project-tag tag-ts">TypeScript</span>
+        <span class="project-tag tag-mysql">REST API</span>
+      </div>
+    </div>
+    <div class="project-card">
+      <div class="project-icon">📦</div>
+      <h3 class="project-title">Sistema de Inventario y Facturación</h3>
+      <p class="project-sub">Proyecto Académico · UNAH</p>
+      <p class="project-desc">Aplicación web completa para gestión de inventario y facturación. Módulos de ventas, control de usuarios, autenticación con roles y administración de base de datos con respaldos.</p>
+      <div class="project-tags">
+        <span class="project-tag tag-laravel">Laravel</span>
+        <span class="project-tag tag-php">PHP</span>
+        <span class="project-tag tag-mysql">MySQL</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FORMACIÓN -->
+<section id="formacion">
+  <div class="fade-in">
+    <p class="section-tag">// 05 · formación</p>
+    <h2 class="section-title">Educación</h2>
+    <div class="section-divider"></div>
+  </div>
+  <div class="edu-grid fade-in">
+    <div class="edu-card">
+      <p class="edu-year">2026 · Graduada</p>
+      <h3 class="edu-degree">Licenciatura en Informática Administrativa</h3>
+      <p class="edu-inst">Universidad Nacional Autónoma de Honduras (UNAH)</p>
+    </div>
+    <div class="edu-card">
+      <p class="edu-year">2020 · Graduada</p>
+      <h3 class="edu-degree">Bachillerato Técnico Profesional en Informática</h3>
+      <p class="edu-inst">Instituto Héctor Pineda Ugarte</p>
+    </div>
+  </div>
+
+  <div style="margin-top:3.5rem" class="fade-in">
+    <p class="section-tag">// certificaciones</p>
+    <h3 style="font-family:var(--ff-display);font-size:1.3rem;font-weight:600;margin-bottom:1.5rem;">Cursos y Certificaciones</h3>
+    <div class="certs-list">
+      <div class="cert-item">
+        <span class="cert-icon">🌐</span>
+        <div>
+          <p class="cert-name">CCNA: Introducción a las Redes</p>
+          <p class="cert-issuer">Cisco Networking Academy</p>
+        </div>
+      </div>
+      <div class="cert-item">
+        <span class="cert-icon">🎨</span>
+        <div>
+          <p class="cert-name">Diseño Web con HTML5 y WordPress</p>
+          <p class="cert-issuer">INFOP</p>
+        </div>
+      </div>
+      <div class="cert-item">
+        <span class="cert-icon">🗄️</span>
+        <div>
+          <p class="cert-name">Base de Datos con MySQL</p>
+          <p class="cert-issuer">INFOP</p>
+        </div>
+      </div>
+      <div class="cert-item">
+        <span class="cert-icon">📊</span>
+        <div>
+          <p class="cert-name">Introducción a la Ciencia de Datos</p>
+          <p class="cert-issuer">Cisco Networking Academy</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACTO -->
+<section id="contacto">
+  <div class="fade-in">
+    <p class="section-tag">// 06 · contacto</p>
+    <h2 class="section-title">Trabajemos juntos</h2>
+    <div class="section-divider" style="margin-left:auto;margin-right:auto;"></div>
+  </div>
+  <p class="contact-desc fade-in">Estoy disponible para oportunidades como desarrolladora frontend, full stack junior o analista de sistemas. No dudes en escribirme.</p>
+  <div class="contact-links fade-in">
+    <a href="mailto:tu@email.com" class="contact-link">
+      <span>✉</span> Email
+    </a>
+    <a href="https://linkedin.com/in/tu-perfil" target="_blank" class="contact-link">
+      <span>in</span> LinkedIn
+    </a>
+    <a href="https://github.com/tu-usuario" target="_blank" class="contact-link">
+      <span>⌥</span> GitHub
+    </a>
+  </div>
+  <p class="contact-email fade-in">tu@email.com</p>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2026 <span>Hellen Rocío Pinel Baca</span></p>
+  <p>Desarrolladora Web Frontend · Tegucigalpa, Honduras</p>
+</footer>
+
+<script>
+  // Scroll reveal
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
+
+  // Terminal typewriter
+  const lines = [
+    { el: null, text: '' }
+  ];
+  // já renderizado estaticamente, solo el cursor parpadea
+
+  // Nav active link
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-links a');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => {
+      if (window.scrollY >= s.offsetTop - 120) current = s.id;
+    });
+    navLinks.forEach(a => {
+      a.style.color = a.getAttribute('href') === '#' + current ? 'var(--cyan)' : '';
+    });
+  });
+</script>
+</body>
+</html>
